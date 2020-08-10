@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>
+        Document
+    </title>
+</head>
+
+<body>
+    <section id="todolist">
+        <div id="app">
+            v-for="(item,index) in list"
+        </div>
+        <input id="input" v-model="inputValue" @keyup.enter="add">
+        请输入
+        </input>
+        <li class="todo" v-for="(item,index) in list" @click="remove">
+            <label>{{item}}</label>
+        </li>
+        <button id="button" value="按钮" v-on:click="doIT">
+            button
+        </button>
+        <span v-show="list.length !=0">{{list.length}}</span>
+
+        <h2>
+            网易云音乐
+        </h2>
+        <span>
+            搜索
+            <button @click="stopMusic" v-show="musicList.length != 0"> 停止</button>
+            
+        </span>
+        <input id="input2" v-model="serachValue" @keyup.enter="searchSong">
+        <li class="Songs" v-for="(item,index) in musicList">
+            <label>{{item.name}}</label>
+            <button @click="playMusic(item.id)">播放</button>
+        </li>
+        
+        <!--<audio ref='audio' controls>
+
+        </audio>-->
+        <div class="auto_coin">
+            <audio ref="audio" :src="musList" controls autoplay loop class="myauto"></audio>
+        </div>
+        
+
+    </section>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: "#todolist",
+            methods: {
+                doIT: function () {
+                    alert("doIT")
+                },
+                add: function () {
+                    this.list.push(this.inputValue)
+                    console.log(this.inputValue)
+                    this.inputValue = ""
+                },
+                remove: function (index) {
+                    this.list.splice(index, 1)
+                },
+                searchSong: function () {
+                    var that = this;
+                    axios.get("https://autumnfish.cn/search?keywords=" + this.serachValue).then(
+                        function (response) { that.musicList = response.data.result.songs;
+                        console.log(response.data.result.songs)
+                        //musicurl="https://autumnfish.cn/song/url"+response.data.result.songs.copyrightId
+                        //console.log(musicurl)
+                        }
+                        
+                    )
+
+
+                },
+                searchSong2: function () {
+                    console.log(this.serachValue)
+                },
+                playMusic:function(musicID){
+                    var that = this;
+                    console.log("playMusicID"+musicID)
+                    //musicurl="https://autumnfish.cn/song/url"+this.
+                    axios.get("https://autumnfish.cn/song/url?id="+musicID).then(
+                        function(response){
+                            
+                            //console.log(response.data.response.data.url)
+                            console.log(response);
+                            console.log(response.data.data[0].url);
+                            that.musList = response.data.data[0].url;
+                            console.log(that.musList);
+                            //that.$refs.audio.src = that.musicurl
+
+                        }
+
+
+                    )
+
+                },
+                stopMusic:function(){
+
+                }
+            },
+            data: {
+                list: ["苹果", "相机"],
+                apple: ["你好", "好"],
+                inputValue: "",
+                //url: "https://autumnfish.cn/search?keywords=",
+                //url: "https://autumnfish.cn/song/url",
+                ////*[@id="todolist"]/li[3]/label
+                serachValue:"",
+                musicList:[],
+                musicurl:"",
+                musList:""
+
+            }
+        })
+    </script>
+
+</body>
+
+
+
+</html>
